@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "optimization_real_system",
+			"path": "../../.."
+		},
+		{
+			"name": "TESSOptimization",
+			"path": "../../../../TESSOptimization"
+		}
+	],
+	"settings": {}
+}

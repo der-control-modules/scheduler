@@ -1,0 +1,110 @@
+{
+    "campus": "PNNL",
+    "building": "SEB",
+    "device": "BESS",
+    "soc_point_name": "BAT_SOC",
+    "energy_storage_system":"tess",
+    "method": "direct",
+    "tess_direct_signal": 20,
+    "identity": "tess.scheduler4",
+    "bess_actuator_vip": "bess.control",
+    "tess_actuator_vip": "tess.control",
+    "run_schedule": "0 0 * * *",
+    "data_source" :  "postgres.cetc",
+    "external_platform" :  "vc",
+    "window_length": 24,
+    "location": [{"wfo": "PDT", "x": 119, "y": 131}],
+    "season":"Summer",
+    "forecast_config":{
+        "forecast_data_source": "info_agent",
+        "load_topic" :  "PNNL/SEB/ELECTRIC_METER/WholeBuildingPower",
+        "load_forecast_topic" : "devices/PNNL/SEB/forecast/all",
+        "load_forecast_point" : "load",
+        "uncontrollable_load_forecast_point" : "uncontrollable_load",
+        "duration_data_collection":  20,
+        
+        "predicted_temperature": [68, 65, 62, 60, 58, 56, 57, 62, 67, 71, 75, 78, 81, 84, 86, 88, 89, 90, 90, 89, 86, 79, 74, 71],
+        "predicted_uncontrollable_load": [79.8, 80.2, 80.1, 79.4, 79.6, 78.8,
+         79.2, 85.5, 85.6, 88.0, 84.8, 86.7, 
+         83.1, 84.7, 86.3, 87.7, 86.3, 83.7,
+        81.4, 79.9, 79.0, 79.5, 82.3, 80]
+
+        ,
+        "predicted_load": [93.2, 91.2, 89.8, 88.0, 88.7, 87.9, 92.4, 93.1, 94.2, 89.2, 
+        119.0, 102.0, 113.0, 106.0, 106.0, 111.0, 115.0, 111.0, 116.0, 
+        108.0, 101.0, 101.0, 89.1, 88.5]
+        ,
+        "predicted_price": [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
+        0.09, 0.16, 0.16, 0.09, 0.16, 0.16, 0.16, 0.16,
+        0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.05]
+    },
+    "tess_setpoints": [-9.035, -9.038, -9.039, -9.0393, -9.032761167, -9.0324, 
+        -9.0355, -6.537, -1.2103, 8.0288, 5.8448, 6.952,
+        6.425, 6.368, 7.684, 9.898, 9.898, 9.8987,
+        0, 0, 0, 0, 0, 0],
+    "bess_setpoints": [-9.035, -9.038, -9.039, -9.0393, -9.032761167, -9.0324, 
+        -9.0355, -6.537, -1.2103, 8.0288, 5.8448, 6.952,
+        6.425, 6.368, 7.684, 9.898, 9.898, 9.8987,
+        0, 0, 0, 0, 0, 0],
+    "tess_optimizer_config": {
+        "initial_soc": 10,
+        "soc_final": 10,
+        "min_soc": 10,
+        "max_soc": 90,
+        "building_power_min": 0,
+        "peak_limit": 110,
+        "q_stor": 1900,
+        "efficiency": 1,
+        "cf": 3.915,
+        "t_cw_ch": 23,
+        "t_cc_in": 40,
+        "t_fr": 32
+    },
+    "chiller_config": {
+        "t_cw_norm": 50,
+        "COP": 5,
+        "Q_norm": 42,
+        "ice_mass": 9.5,
+        "ice_charge_rate": 13.7,
+        "ice_discharge_rate": 12.3 
+    },
+    "parameters": {
+        "a_coef": [0.257986, 0.0389016, -0.00021708, 0.0468684, -0.00094284, -0.00034344],
+        "b_coef": [0.933884, -0.058212, 0.00450036, 0.00243, 0.000486, -0.001215],
+        "c_coef": [0.222903, 0.313387, 0.46371],
+        "p_coef": [0.92, -0.62, 4.93, -17.05, 24.02, -12.12],
+        "r_coef": [0.49, 0.81, -0.98, 0.67]
+    },
+    "bess_optimizer_config": {
+        "bess_rated_kw": 100,
+        "initial_soc": 50,
+        "min_soc": 10,
+        "max_soc": 90,
+        "reference_soc": 50,
+        "building_power_min": 0,
+        "demand_charge": 26.06,
+        "bess_parameter":{
+        "bess_chg_max": 100,
+        "bess_dis_max": 100,
+        "bess_reserve_soc": 20,
+        "bess_rated_kWh": 200,
+        "charging_efficiency": 0.95,
+        "discharging_efficiency": 0.975
+        }
+    },
+    "demand_rate_config": {
+        "type_of_demand_rate":"flat",
+        "peak_time_start" : 16,
+        "peak_time_end" : 21,
+        "first_partial_peak_start" : 14,
+        "first_partial_peak_stop" : 16,
+        "second_partial_peak_start" : 21,
+        "second_partial_peak_stop" : 23,
+        "demand_charge" : 20,
+        "peak_demand_rate" : 32.90,
+        "part_peak_demand_price" : 6.81,
+        "peak_price" : 0.19598,
+        "part_peak_price" : 0.15878, 
+        "off_peak_price" : 0.13246
+    }
+}

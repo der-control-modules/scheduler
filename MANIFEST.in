@@ -1,0 +1,2 @@
+include recursive optimize/data/*.csv
+include recursive optimize/thermal/*.json
