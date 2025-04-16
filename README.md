@@ -30,33 +30,57 @@ This configuration defines control logic for a simulated Battery Energy Storage 
 
 ```json
 {
-  "ess": {
-    "class_name": "FakeESS",
-    "power_capacity_kw": 100,
-    "energy_capacity_kwh": 125,
-    "bess_topic": "devices/PNNL/BESS",
-    "soc_point": "SoC",
-    "power_reading_point": "",
-    "actuator_vip": "",
-    "power_command_point": ""
-  },
-  "modes": [
-    {
-      "name": "ActivePowerResponseName",
-      "class_name": "ActivePowerResponse",
-      "activation_threshold": 10.0,
-      "output_ratio": 1.0,
-      "ramp_params": {}
+    "campus": "PNNL",
+    "building": "SEB",
+    "device": "BESS",
+    "soc_point_name": "BAT_SOC",
+    "energy_storage_system":"bess",
+    "method": "direct",
+    "tess_direct_signal": 20,
+    "bess_actuator_vip": "bess.control",
+    "run_schedule": "0 0 * * *",
+    "data_source" :  "postgres.cetc",
+    "window_length": 24,
+    "location": [{"wfo": "PDT", "x": 119, "y": 131}],
+    "season":"Summer",
+    "forecast_config":{
+        "forecast_data_source": "info_agent",
+        "load_topic" :  "PNNL/SEB/ELECTRIC_METER/WholeBuildingPower",
+        "load_forecast_topic" : "devices/PNNL/SEB/forecast/all",
+        "load_forecast_point" : "load",
+    },
+    "bess_optimizer_config": {
+        "bess_rated_kw": 100,
+        "initial_soc": 50,
+        "min_soc": 10,
+        "max_soc": 90,
+        "reference_soc": 50,
+        "building_power_min": 0,
+        "demand_charge": 26.06,
+        "bess_parameter":{
+        "bess_chg_max": 100,
+        "bess_dis_max": 100,
+        "bess_reserve_soc": 20,
+        "bess_rated_kWh": 200,
+        "charging_efficiency": 0.95,
+        "discharging_efficiency": 0.975
+        }
+    },
+    "demand_rate_config": {
+        "type_of_demand_rate":"flat",
+        "peak_time_start" : 16,
+        "peak_time_end" : 21,
+        "first_partial_peak_start" : 14,
+        "first_partial_peak_stop" : 16,
+        "second_partial_peak_start" : 21,
+        "second_partial_peak_stop" : 23,
+        "demand_charge" : 20,
+        "peak_demand_rate" : 32.90,
+        "part_peak_demand_price" : 6.81,
+        "peak_price" : 0.19598,
+        "part_peak_price" : 0.15878, 
+        "off_peak_price" : 0.13246
     }
-  ],
-  "use_cases": [
-    {
-      "class_name": "PeakLimiting",
-      "realtime_power_topic": "devices/SomeLoad/RealPower"
-    }
-  ],
-  "resolution": 5.0,
-  "start_time": null
 }
 ```
 
