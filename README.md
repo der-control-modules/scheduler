@@ -84,7 +84,62 @@ This configuration defines control logic for a simulated Battery Energy Storage 
 }
 ```
 
+### Configuration Parameters
 
+| Parameter                | Description                                                                                                                        |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| campus / building / device | Identifiers used to build the SOC read path and the schedule publish topic (`record/<campus>/<building>/<device>/schedule`).      |
+| energy_storage_system    | The system being scheduled: `bess`, `tess`, or `hybrid`.                                                                           |
+| method                   | Operating mode of the agent: `control`, `schedule`, or `direct` (see below).                                                       |
+| run_schedule             | Cron expression for when the optimization/scheduling runs (default `0 0 * * *`, i.e. daily at midnight).                            |
+| hours_to_start           | Hours ahead of the top of the hour to schedule the first run.                                                                      |
+| window_length            | Number of hourly steps in the scheduling horizon (default `24`).                                                                   |
+| soc_point_name           | Point name used to read state of charge (default `BAT_SOC`).                                                                        |
+| soc_stale_timedelta      | Maximum age of a SOC reading before TESS actuation is declined.                                                                    |
+| bess_actuator_vip        | VIP identity of the agent used to actuate the BESS (default `bess.control`).                                                        |
+| tess_actuator_vip        | VIP identity of the agent used to actuate the TESS (default `tess.control`).                                                        |
+| tess_direct_signal       | The fixed set point actuated when `method` is `direct`.                                                                            |
+| bess_setpoints / tess_setpoints | Precomputed hourly set points used when `method` is `schedule`.                                                             |
+| season                   | Season used by the optimizer (e.g. `Summer`).                                                                                       |
+| chiller_config           | Chiller parameters; `COP` (coefficient of performance) is used to convert TESS cooling power.                                       |
+| data_source              | Historian/data source identity used for retrieving data (default `postgres.cetc`).                                                 |
+| external_platform        | Name of the external VOLTTRON platform used for cross-platform RPC (default `vc`).                                                  |
+| weather_vip              | VIP identity of the weather agent (default `platform.weather`).                                                                     |
+| forecast_config          | Forecast inputs (see below).                                                                                                        |
+
+#### Forecast Configuration (`forecast_config`)
+
+| Parameter                          | Description                                                                                                              |
+|------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| forecast_data_source               | `info_agent` to subscribe to live forecast topics, or any other value to use static forecasts supplied in the config.    |
+| price_topic / price_point          | Topic and point providing forecasted energy price.                                                                       |
+| load_forecast_topic / load_forecast_point | Topic and point providing forecasted building load.                                                               |
+| uncontrollable_load_forecast_point | Point providing the forecasted uncontrollable load.                                                                      |
+| predicted_price / predicted_load / predicted_uncontrollable_load | Static forecast arrays, used when `forecast_data_source` is not `info_agent`.              |
+
+### Operating Methods (`method`)
+
+The agent behaves differently depending on the configured `method`:
+
+* **`control`** — Runs the optimizer over the forecasted price, load, and current SOC to compute an hourly
+  dispatch, schedules actuation of the ESS at each hour of the horizon, and publishes a schedule record.
+* **`schedule`** — Uses the precomputed `bess_setpoints`/`tess_setpoints`, rotated to start at the current
+  hour, schedules actuation at each hour, and publishes the set points.
+* **`direct`** — Immediately actuates the ESS with the fixed `tess_direct_signal` value.
+
+### Published Schedule
+
+For the `control` and `schedule` methods, the agent publishes a schedule message on
+`record/<campus>/<building>/<device>/schedule`. The message maps each period start time to a dictionary
+describing that period:
+
+| Period Key            | Description                                                                                     |
+|-----------------------|-------------------------------------------------------------------------------------------------|
+| `<ess>_setpoint`      | The scheduled active-power set point in kW (e.g. `bess_setpoint`). Published by the `schedule` method. |
+| `duration_in_seconds` | How long the set point applies, in seconds (default `3600`).                                    |
+
+The scheduler actuates the ESS directly through the configured actuator agents; this published message
+serves as a record of the computed schedule for historians and other interested subscribers.
 
 ## Installation
 

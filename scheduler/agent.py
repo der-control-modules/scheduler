@@ -422,12 +422,13 @@ class Optimize(Agent):
             if self.method.lower() == "control":
                 # algorithm
                 message_dict[forecast_time] = {
-                        "duration_in_second": 3600
+                        "duration_in_seconds": 3600
                     }
             elif self.method.lower() == "schedule":
                 # configure
-                message_dict[forecast_time] ={
-                        f"{self.energy_storage_system}_setpoints": float(setpoints)
+                message_dict[forecast_time] = {
+                        f"{self.energy_storage_system}_setpoint": float(setpoints),
+                        "duration_in_seconds": 3600
                     }
             else:
                 pass
